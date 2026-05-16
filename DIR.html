@@ -2,351 +2,432 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
 <title>push.</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,-apple-system,sans-serif;background:#0a0a0a;color:#f0f0f0;min-height:100vh}
-#app{display:flex;flex-direction:column;min-height:100vh;padding:1.25rem;max-width:420px;margin:0 auto}
-.screen{display:none;flex-direction:column;gap:1rem;flex:1}
-.screen.active{display:flex}
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap');
 
-.card{background:#1a1a1a;border:0.5px solid #2a2a2a;border-radius:14px;padding:1rem 1.25rem}
+  :root {
+    --bg: #0c0c0c;
+    --surface: #141414;
+    --surface2: #1c1c1c;
+    --border: #2a2a2a;
+    --text: #f0ede8;
+    --muted: #555;
+    --accent: #c8f060;
+    --accent-dim: rgba(200,240,96,0.12);
+    --red: #ff5f5f;
+    --radius: 16px;
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
 
-.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.stat-card{background:#141414;border-radius:10px;padding:.9rem;text-align:center}
-.stat-label{font-size:11px;color:#666;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
-.stat-val{font-size:24px;font-weight:500;color:#f0f0f0}
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--sans); }
 
-.btn{width:100%;padding:14px;border-radius:14px;border:none;font-size:15px;font-weight:500;cursor:pointer;transition:opacity .15s}
-.btn-primary{background:#f0f0f0;color:#0a0a0a}
-.btn-primary:hover{opacity:.88}
-.btn-secondary{background:transparent;color:#f0f0f0;border:0.5px solid #2a2a2a;margin-top:.25rem}
-.btn-secondary:hover{background:#1a1a1a}
-.btn-sm{width:auto;padding:7px 16px;border-radius:20px;border:0.5px solid #2a2a2a;background:transparent;color:#aaa;font-size:13px;cursor:pointer}
-.btn-sm:hover{background:#1a1a1a;color:#f0f0f0}
+  #app {
+    max-width: 420px;
+    margin: 0 auto;
+    min-height: 100vh;
+    padding: env(safe-area-inset-top, 20px) 1.25rem env(safe-area-inset-bottom, 20px);
+    display: flex;
+    flex-direction: column;
+  }
 
-#video-wrap{position:relative;border-radius:14px;overflow:hidden;background:#111;aspect-ratio:3/4;width:100%}
-video{width:100%;height:100%;object-fit:cover;display:block;transform:scaleX(-1)}
-canvas{position:absolute;inset:0;width:100%;height:100%;transform:scaleX(-1)}
-#face-status{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.7);color:#fff;font-size:12px;padding:5px 14px;border-radius:20px;white-space:nowrap;backdrop-filter:blur(4px)}
-#phase-indicator{position:absolute;top:12px;right:12px;width:12px;height:12px;border-radius:50%;background:#333;transition:background .2s}
-#phase-indicator.down{background:#4ade80}
+  .screen { display: none; flex-direction: column; gap: 1rem; flex: 1; padding-top: 1rem; }
+  .screen.active { display: flex; }
 
-#rep-counter{font-size:80px;font-weight:300;text-align:center;line-height:1;transition:transform .12s;color:#f0f0f0}
-#rep-label{font-size:12px;color:#555;text-align:center;margin-top:2px;text-transform:uppercase;letter-spacing:.05em}
+  /* ── Typography ── */
+  .logotype { font-family: var(--mono); font-size: 28px; font-weight: 300; letter-spacing: -.02em; color: var(--text); }
+  .sub { font-size: 13px; color: var(--muted); margin-top: 3px; font-family: var(--mono); }
 
-.depth-bar-wrap{display:flex;align-items:center;gap:10px;margin-top:.5rem}
-.depth-bar-wrap span{font-size:11px;color:#555;min-width:24px;text-align:center}
-.depth-bar{flex:1;height:6px;border-radius:3px;background:#1a1a1a;overflow:hidden}
-.depth-fill{height:100%;border-radius:3px;background:#f0f0f0;transition:width .08s;width:0%}
+  /* ── Cards ── */
+  .card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+  }
 
-.hist-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:0.5px solid #1e1e1e}
-.hist-item:last-child{border-bottom:none}
-.hist-meta{font-size:12px;color:#555;margin-top:2px}
-.hist-reps-val{font-size:15px;font-weight:500}
+  /* ── Stat grid ── */
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-card {
+    background: var(--surface2);
+    border-radius: 12px;
+    padding: .85rem 1rem;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-family: var(--mono); }
+  .stat-val { font-size: 26px; font-weight: 400; font-family: var(--mono); line-height: 1; }
+  .stat-val sup { font-size: 13px; color: var(--muted); }
 
-.tab-row{display:flex;gap:6px}
-.tab-btn{flex:1;padding:7px;border-radius:8px;border:0.5px solid #222;background:transparent;color:#666;font-size:12px;cursor:pointer}
-.tab-btn.active{background:#1a1a1a;color:#f0f0f0;border-color:#333}
+  /* ── Buttons ── */
+  .btn {
+    width: 100%; padding: 15px; border-radius: var(--radius);
+    border: none; font-size: 15px; font-weight: 500; cursor: pointer;
+    font-family: var(--sans); transition: transform .1s, opacity .1s;
+    letter-spacing: .01em;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn-primary { background: var(--accent); color: #0c0c0c; }
+  .btn-primary:hover { opacity: .9; }
+  .btn-ghost {
+    background: transparent; color: var(--text);
+    border: 0.5px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--surface); }
+  .btn-pill {
+    width: auto; padding: 7px 16px; border-radius: 40px;
+    border: 0.5px solid var(--border); background: transparent;
+    color: var(--muted); font-size: 12px; font-family: var(--mono);
+    cursor: pointer; transition: color .15s, border-color .15s;
+  }
+  .btn-pill:hover { color: var(--text); border-color: #444; }
 
-.sens-row{display:flex;align-items:center;gap:10px;margin-top:.5rem}
-.sens-row label{font-size:12px;color:#555;white-space:nowrap}
-.sens-row input[type=range]{flex:1;accent-color:#f0f0f0}
-.sens-row span{font-size:13px;font-weight:500;min-width:16px;text-align:right}
+  /* ── Video ── */
+  #video-wrap {
+    position: relative; border-radius: var(--radius);
+    overflow: hidden; background: #000; aspect-ratio: 3/4; width: 100%;
+    border: 0.5px solid var(--border);
+  }
+  #video { width: 100%; height: 100%; object-fit: cover; display: block; transform: scaleX(-1); }
+  #cv { position: absolute; inset: 0; width: 100%; height: 100%; transform: scaleX(-1); }
 
-.section-head{display:flex;justify-content:space-between;align-items:center}
-.section-title{font-size:22px;font-weight:500}
-.section-sub{font-size:13px;color:#555;margin-top:2px}
+  #status-pill {
+    position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+    background: rgba(12,12,12,.8); color: var(--text); font-size: 11px;
+    padding: 5px 14px; border-radius: 40px; white-space: nowrap;
+    font-family: var(--mono); border: 0.5px solid var(--border);
+    backdrop-filter: blur(8px);
+  }
 
-.set-row{display:flex;justify-content:space-between;align-items:center}
-.set-info{font-size:13px;color:#555}
+  #depth-dot {
+    position: absolute; top: 14px; right: 14px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--muted); transition: background .15s, transform .15s;
+  }
+  #depth-dot.active { background: var(--accent); transform: scale(1.4); }
+
+  /* ── Rep counter ── */
+  #rep-counter {
+    font-family: var(--mono); font-size: 96px; font-weight: 300;
+    text-align: center; line-height: 1;
+    transition: transform .1s; color: var(--text);
+  }
+  #rep-label {
+    font-size: 10px; color: var(--muted); text-align: center;
+    margin-top: 4px; font-family: var(--mono); text-transform: uppercase; letter-spacing: .1em;
+  }
+
+  /* ── Depth bar ── */
+  .depth-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+  .depth-row span { font-size: 10px; color: var(--muted); font-family: var(--mono); min-width: 20px; }
+  .depth-bar { flex: 1; height: 4px; border-radius: 2px; background: var(--surface2); overflow: hidden; }
+  .depth-fill { height: 100%; border-radius: 2px; background: var(--accent); width: 0%; transition: width .07s; }
+
+  /* ── Sensitivity ── */
+  .sens-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+  .sens-row span { font-size: 11px; color: var(--muted); font-family: var(--mono); white-space: nowrap; }
+  input[type=range] {
+    flex: 1; height: 4px; border-radius: 2px; cursor: pointer;
+    accent-color: var(--accent);
+  }
+  .sens-val { min-width: 16px; text-align: right; font-family: var(--mono); font-size: 13px; }
+
+  /* ── History ── */
+  .tab-row { display: flex; gap: 6px; }
+  .tab { flex: 1; padding: 7px 4px; border-radius: 8px; border: 0.5px solid var(--border); background: transparent; color: var(--muted); font-size: 11px; cursor: pointer; font-family: var(--mono); transition: all .15s; }
+  .tab.on { background: var(--surface); color: var(--text); border-color: #3a3a3a; }
+
+  .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 0.5px solid var(--border); }
+  .hist-item:last-child { border-bottom: none; }
+  .hist-reps { font-family: var(--mono); font-size: 16px; font-weight: 400; }
+  .hist-meta { font-size: 11px; color: var(--muted); margin-top: 2px; font-family: var(--mono); }
+  .hist-badge {
+    font-size: 10px; font-family: var(--mono); padding: 3px 8px;
+    border-radius: 20px; background: var(--accent-dim); color: var(--accent);
+    border: 0.5px solid rgba(200,240,96,.2);
+  }
+
+  /* ── Workout header ── */
+  .w-header { display: flex; justify-content: space-between; align-items: center; }
+  .set-chip { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+  /* ── Error ── */
+  .err-box { background: rgba(255,95,95,.08); border: 0.5px solid rgba(255,95,95,.2); border-radius: 12px; padding: 1rem; font-size: 13px; color: var(--red); font-family: var(--mono); text-align: center; line-height: 1.6; }
 </style>
 </head>
 <body>
 <div id="app">
 
-<!-- IDLE -->
-<div class="screen active" id="screen-idle">
-  <div style="padding:.25rem 0 .5rem">
-    <div class="section-title">push.</div>
-    <div class="section-sub">place your phone flat, screen up</div>
-  </div>
-  <div class="stat-grid">
-    <div class="stat-card"><div class="stat-label">today</div><div class="stat-val" id="s-today">0</div></div>
-    <div class="stat-card"><div class="stat-label">all time</div><div class="stat-val" id="s-alltime">0</div></div>
-    <div class="stat-card"><div class="stat-label">best set</div><div class="stat-val" id="s-best">0</div></div>
-    <div class="stat-card"><div class="stat-label">streak</div><div class="stat-val" id="s-streak">0<span style="font-size:13px;color:#555">d</span></div></div>
-  </div>
-  <button class="btn btn-primary" onclick="startWorkout()">start workout</button>
-  <button class="btn btn-secondary" onclick="goHistory()">view history</button>
-  <div class="card">
-    <div style="font-size:13px;font-weight:500;margin-bottom:.5rem">detection sensitivity</div>
-    <div class="sens-row">
-      <label>low</label>
-      <input type="range" id="sens" min="1" max="5" step="1" value="3" oninput="document.getElementById('sens-out').textContent=this.value">
-      <label>high</label>
-      <span id="sens-out">3</span>
+  <!-- IDLE SCREEN -->
+  <div class="screen active" id="s-idle">
+    <div>
+      <div class="logotype">push.</div>
+      <div class="sub">place phone flat · screen up · look down</div>
     </div>
-    <div style="font-size:11px;color:#444;margin-top:8px">higher = counts reps at shallower depth</div>
-  </div>
-</div>
-
-<!-- WORKOUT -->
-<div class="screen" id="screen-workout">
-  <div class="set-row">
-    <div class="set-info" id="set-label">set 1</div>
-    <div style="display:flex;gap:8px">
-      <button class="btn-sm" onclick="nextSet()">rest →</button>
-      <button class="btn-sm" onclick="finishWorkout()">done</button>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-label">today</div><div class="stat-val" id="i-today">0</div></div>
+      <div class="stat-card"><div class="stat-label">all time</div><div class="stat-val" id="i-all">0</div></div>
+      <div class="stat-card"><div class="stat-label">best set</div><div class="stat-val" id="i-best">0</div></div>
+      <div class="stat-card"><div class="stat-label">streak</div><div class="stat-val" id="i-streak">0<sup>d</sup></div></div>
+    </div>
+    <button class="btn btn-primary" onclick="startWorkout()">start workout</button>
+    <button class="btn btn-ghost" onclick="goHist()">history</button>
+    <div class="card">
+      <div style="font-size:12px;font-family:var(--mono);color:var(--muted);margin-bottom:.5rem">detection sensitivity</div>
+      <div class="sens-row">
+        <span>low</span>
+        <input type="range" id="sens" min="1" max="5" step="1" value="3" oninput="document.getElementById('sv').textContent=this.value">
+        <span>high</span>
+        <span class="sens-val" id="sv">3</span>
+      </div>
+      <div style="font-size:10px;color:var(--muted);margin-top:8px;font-family:var(--mono)">higher = shallower reps count</div>
     </div>
   </div>
-  <div id="video-wrap">
-    <video id="video" playsinline autoplay muted></video>
-    <canvas id="cv"></canvas>
-    <div id="phase-indicator"></div>
-    <div id="face-status">looking for face…</div>
-  </div>
-  <div>
-    <div id="rep-counter">0</div>
-    <div id="rep-label">reps this set</div>
-    <div class="depth-bar-wrap">
-      <span>up</span>
-      <div class="depth-bar"><div class="depth-fill" id="depth-fill"></div></div>
-      <span>down</span>
+
+  <!-- WORKOUT SCREEN -->
+  <div class="screen" id="s-workout">
+    <div class="w-header">
+      <div class="set-chip" id="set-lbl">set 1</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-pill" onclick="nextSet()">rest →</button>
+        <button class="btn-pill" onclick="finishWorkout()" style="color:var(--accent);border-color:rgba(200,240,96,.3)">done ✓</button>
+      </div>
     </div>
+    <div id="video-wrap">
+      <video id="video" playsinline autoplay muted></video>
+      <canvas id="cv"></canvas>
+      <div id="depth-dot"></div>
+      <div id="status-pill">loading detector…</div>
+    </div>
+    <div style="padding:.25rem 0">
+      <div id="rep-counter">0</div>
+      <div id="rep-label">reps this set</div>
+      <div class="depth-row">
+        <span>up</span>
+        <div class="depth-bar"><div class="depth-fill" id="dfill"></div></div>
+        <span>dn</span>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-label">session</div><div class="stat-val" id="w-sess">0</div></div>
+      <div class="stat-card"><div class="stat-label">sets</div><div class="stat-val" id="w-sets">0</div></div>
+    </div>
+    <div id="cam-err" style="display:none"></div>
   </div>
-  <div class="stat-grid">
-    <div class="stat-card"><div class="stat-label">session total</div><div class="stat-val" id="w-total">0</div></div>
-    <div class="stat-card"><div class="stat-label">sets done</div><div class="stat-val" id="w-sets">0</div></div>
+
+  <!-- HISTORY SCREEN -->
+  <div class="screen" id="s-hist">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div class="logotype" style="font-size:22px">history</div>
+      <button class="btn-pill" onclick="goIdle()">← back</button>
+    </div>
+    <div class="tab-row">
+      <button class="tab on" onclick="filterH('all',this)">all</button>
+      <button class="tab" onclick="filterH('week',this)">week</button>
+      <button class="tab" onclick="filterH('month',this)">month</button>
+    </div>
+    <div class="card" id="hist-list"></div>
   </div>
+
 </div>
 
-<!-- HISTORY -->
-<div class="screen" id="screen-history">
-  <div class="section-head">
-    <div class="section-title">history</div>
-    <button class="btn-sm" onclick="goIdle()">← back</button>
-  </div>
-  <div class="tab-row">
-    <button class="tab-btn active" onclick="filterHist('all',this)">all time</button>
-    <button class="tab-btn" onclick="filterHist('week',this)">this week</button>
-    <button class="tab-btn" onclick="filterHist('month',this)">this month</button>
-  </div>
-  <div class="card" id="hist-list"></div>
-</div>
+<!-- TF.js + BlazeFace via unpkg (stable, versioned) -->
+<script src="https://unpkg.com/@tensorflow/tfjs-core@4.17.0/dist/tf-core.min.js"></script>
+<script src="https://unpkg.com/@tensorflow/tfjs-backend-webgl@4.17.0/dist/tf-backend-webgl.min.js"></script>
+<script src="https://unpkg.com/@tensorflow-models/blazeface@0.0.7/dist/blazeface.min.js"></script>
 
-</div>
 <script>
-const STORAGE_KEY='pushr_v2';
-let hist=[];
-let curReps=0,curSet=1,sessReps=0,setsDone=0;
-let stream=null,rafId=null,faceMesh=null;
-let isRunning=false;
-let calibFrames=0,calibSum=0,baseSize=null;
-let repPhase='up';
-let videoEl,canvasEl,ctx2d;
+const KEY = 'push_v3';
+let hist = [];
+let curReps = 0, curSet = 1, sessReps = 0, setsDone = 0;
+let stream = null, rafId = null, model = null;
+let running = false;
+let baseArea = null, calibN = 0, calibSum = 0;
+let phase = 'up';
+let vidEl, cvEl, cx;
 
-function loadHist(){try{const r=localStorage.getItem(STORAGE_KEY);hist=r?JSON.parse(r):[]}catch{hist=[]}}
-function saveHist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(hist))}catch{}}
-function today(){return new Date().toISOString().slice(0,10)}
+/* ── Storage ── */
+function load() { try { hist = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { hist = []; } }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(hist)); } catch {} }
+function todayStr() { return new Date().toISOString().slice(0, 10); }
 
-function updateIdleStats(){
-  const t=today();
-  const todayReps=hist.filter(h=>h.date===t).reduce((a,h)=>a+h.reps,0);
-  const allTime=hist.reduce((a,h)=>a+h.reps,0);
-  const best=hist.reduce((a,h)=>Math.max(a,h.reps),0);
-  let streak=0,d=new Date();
-  const days=new Set(hist.map(h=>h.date));
-  while(days.has(d.toISOString().slice(0,10))){streak++;d.setDate(d.getDate()-1)}
-  document.getElementById('s-today').textContent=todayReps;
-  document.getElementById('s-alltime').textContent=allTime;
-  document.getElementById('s-best').textContent=best;
-  document.getElementById('s-streak').innerHTML=streak+'<span style="font-size:13px;color:#555">d</span>';
+/* ── Idle stats ── */
+function refreshIdle() {
+  const t = todayStr();
+  const todayR = hist.filter(h => h.date === t).reduce((a, h) => a + h.reps, 0);
+  const allR = hist.reduce((a, h) => a + h.reps, 0);
+  const best = hist.reduce((a, h) => Math.max(a, h.reps), 0);
+  let streak = 0;
+  const days = new Set(hist.map(h => h.date));
+  for (let d = new Date(); days.has(d.toISOString().slice(0,10)); d.setDate(d.getDate()-1)) streak++;
+  document.getElementById('i-today').textContent = todayR;
+  document.getElementById('i-all').textContent = allR;
+  document.getElementById('i-best').textContent = best;
+  document.getElementById('i-streak').innerHTML = streak + '<sup>d</sup>';
 }
 
-function goScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-function goIdle(){stopCamera();goScreen('screen-idle');updateIdleStats()}
-function goHistory(){renderHist('all');goScreen('screen-history')}
+/* ── Screen nav ── */
+function go(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function goIdle() { stopCam(); go('s-idle'); refreshIdle(); }
+function goHist() { renderHist('all'); go('s-hist'); }
 
-function filterHist(f,btn){
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+/* ── History ── */
+function filterH(f, btn) {
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
   renderHist(f);
 }
-function renderHist(f){
-  const el=document.getElementById('hist-list');
-  let entries=[...hist].reverse();
-  if(f==='week'){const w=new Date();w.setDate(w.getDate()-7);entries=entries.filter(h=>new Date(h.date)>=w)}
-  if(f==='month'){const m=new Date();m.setDate(m.getDate()-30);entries=entries.filter(h=>new Date(h.date)>=m)}
-  if(!entries.length){el.innerHTML='<p style="font-size:13px;color:#555">no workouts yet</p>';return}
-  el.innerHTML=entries.map(h=>`
+function renderHist(f) {
+  const el = document.getElementById('hist-list');
+  let entries = [...hist].reverse();
+  const now = new Date();
+  if (f === 'week') { const w = new Date(now); w.setDate(w.getDate()-7); entries = entries.filter(h => new Date(h.date) >= w); }
+  if (f === 'month') { const m = new Date(now); m.setDate(m.getDate()-30); entries = entries.filter(h => new Date(h.date) >= m); }
+  if (!entries.length) { el.innerHTML = '<div style="font-size:12px;color:var(--muted);font-family:var(--mono)">no workouts yet</div>'; return; }
+  el.innerHTML = entries.map(h => `
     <div class="hist-item">
       <div>
-        <div class="hist-reps-val">${h.reps} reps</div>
+        <div class="hist-reps">${h.reps} reps</div>
         <div class="hist-meta">${h.date} · set ${h.set}</div>
       </div>
-      <div style="font-size:11px;color:#444">${h.duration ? h.duration+'s' : ''}</div>
+      <div class="hist-badge">${h.reps >= 20 ? '🔥' : h.reps >= 10 ? '💪' : '✓'}</div>
     </div>`).join('');
 }
 
-async function startWorkout(){
-  curReps=0;curSet=1;sessReps=0;setsDone=0;
-  resetCalib();repPhase='up';
-  updateWUI();
-  goScreen('screen-workout');
-  await initCamera();
+/* ── Workout flow ── */
+async function startWorkout() {
+  curReps = 0; curSet = 1; sessReps = 0; setsDone = 0;
+  resetCalib(); phase = 'up';
+  updateW();
+  go('s-workout');
+  document.getElementById('cam-err').style.display = 'none';
+  await initCam();
 }
 
-function nextSet(){
-  if(curReps>0){hist.push({date:today(),set:curSet,reps:curReps});saveHist();sessReps+=curReps;setsDone++}
-  curSet++;curReps=0;resetCalib();repPhase='up';
-  updateWUI();
+function nextSet() {
+  if (curReps > 0) { hist.push({ date: todayStr(), set: curSet, reps: curReps }); save(); sessReps += curReps; setsDone++; }
+  curSet++; curReps = 0; resetCalib(); phase = 'up';
+  updateW();
 }
 
-function finishWorkout(){
-  if(curReps>0){hist.push({date:today(),set:curSet,reps:curReps});saveHist()}
-  stopCamera();goIdle();
+function finishWorkout() {
+  if (curReps > 0) { hist.push({ date: todayStr(), set: curSet, reps: curReps }); save(); }
+  goIdle();
 }
 
-function resetCalib(){calibFrames=0;calibSum=0;baseSize=null}
+function resetCalib() { baseArea = null; calibN = 0; calibSum = 0; }
 
-function updateWUI(){
-  document.getElementById('rep-counter').textContent=curReps;
-  document.getElementById('set-label').textContent='set '+curSet;
-  document.getElementById('w-total').textContent=sessReps+curReps;
-  document.getElementById('w-sets').textContent=setsDone;
+function updateW() {
+  document.getElementById('rep-counter').textContent = curReps;
+  document.getElementById('set-lbl').textContent = 'set ' + curSet;
+  document.getElementById('w-sess').textContent = sessReps + curReps;
+  document.getElementById('w-sets').textContent = setsDone;
 }
 
-async function initCamera(){
-  videoEl=document.getElementById('video');
-  canvasEl=document.getElementById('cv');
-  ctx2d=canvasEl.getContext('2d');
-  try{
-    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});
-    videoEl.srcObject=stream;
-    await new Promise(r=>videoEl.onloadedmetadata=r);
-    canvasEl.width=videoEl.videoWidth;
-    canvasEl.height=videoEl.videoHeight;
-    isRunning=true;
-    loadFaceMesh();
-  }catch(e){
-    document.getElementById('face-status').textContent='⚠ camera permission denied';
+/* ── Camera ── */
+async function initCam() {
+  vidEl = document.getElementById('video');
+  cvEl = document.getElementById('cv');
+  cx = cvEl.getContext('2d');
+
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }, audio: false });
+    vidEl.srcObject = stream;
+    await new Promise(r => { vidEl.onloadedmetadata = r; });
+    cvEl.width = vidEl.videoWidth;
+    cvEl.height = vidEl.videoHeight;
+    setStatus('loading model…');
+    await tf.setBackend('webgl');
+    await tf.ready();
+    model = await blazeface.load();
+    setStatus('calibrating…');
+    running = true;
+    loop();
+  } catch (e) {
+    const errEl = document.getElementById('cam-err');
+    errEl.style.display = 'block';
+    errEl.innerHTML = `<div class="err-box">camera error: ${e.message}<br><br>make sure you've allowed camera access in your browser settings.</div>`;
+    setStatus('error');
   }
 }
 
-function loadFaceMesh(){
-  const s=document.createElement('script');
-  s.src='https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559619/face_mesh.js';
-  s.onload=()=>{
-    faceMesh=new FaceMesh({locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559619/${f}`});
-    faceMesh.setOptions({maxNumFaces:1,refineLandmarks:false,minDetectionConfidence:0.5,minTrackingConfidence:0.5});
-    faceMesh.onResults(onFaceResults);
-    tick();
-  };
-  s.onerror=()=>fallbackToProximity();
-  document.head.appendChild(s);
+function stopCam() {
+  running = false;
+  if (rafId) cancelAnimationFrame(rafId);
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  stream = null; model = null; rafId = null;
 }
 
-function fallbackToProximity(){
-  document.getElementById('face-status').textContent='using proximity mode — nose close = down';
-  proximityMode();
-}
+function setStatus(msg) { const el = document.getElementById('status-pill'); if (el) el.textContent = msg; }
 
-function proximityMode(){
-  if(!isRunning)return;
-  const ctx=canvasEl.getContext('2d');
-  ctx.clearRect(0,0,canvasEl.width,canvasEl.height);
-  rafId=requestAnimationFrame(proximityMode);
-}
+function getSens() { return 0.04 + (parseInt(document.getElementById('sens').value) - 1) * 0.013; }
 
-async function tick(){
-  if(!isRunning||!faceMesh)return;
-  if(videoEl.readyState>=2)await faceMesh.send({image:videoEl});
-  rafId=requestAnimationFrame(tick);
-}
+async function loop() {
+  if (!running || !model) return;
+  if (vidEl.readyState >= 2) {
+    try {
+      const preds = await model.estimateFaces(vidEl, false);
+      cx.clearRect(0, 0, cvEl.width, cvEl.height);
+      if (preds.length > 0) {
+        const p = preds[0];
+        const [x1, y1] = p.topLeft;
+        const [x2, y2] = p.bottomRight;
+        const w = x2 - x1, h = y2 - y1;
+        const area = w * h;
 
-function getSens(){return 0.038+(parseInt(document.getElementById('sens').value)-1)*0.014}
+        // Calibration
+        if (baseArea === null) {
+          calibN++; calibSum += area;
+          setStatus(`calibrating… ${Math.min(calibN, 20)}/20`);
+          if (calibN >= 20) { baseArea = calibSum / calibN; setStatus('✓ go!'); }
+        } else {
+          const ratio = area / baseArea;
+          const sens = getSens();
+          const pct = Math.round(Math.min(100, Math.max(0, (ratio - 0.6) / 1.0 * 100)));
+          document.getElementById('dfill').style.width = pct + '%';
 
-function onFaceResults(res){
-  if(!ctx2d)return;
-  ctx2d.clearRect(0,0,canvasEl.width,canvasEl.height);
-  const statusEl=document.getElementById('face-status');
-  const phaseEl=document.getElementById('phase-indicator');
+          const dot = document.getElementById('depth-dot');
+          if (phase === 'up' && ratio > 1 + sens) {
+            phase = 'down'; dot.classList.add('active');
+          } else if (phase === 'down' && ratio < 1 - sens * 0.4) {
+            phase = 'up'; dot.classList.remove('active');
+            curReps++;
+            updateW();
+            pulse();
+          }
+          setStatus(phase === 'down' ? '⬇ hold' : '⬆ push up');
+        }
 
-  if(!res.multiFaceLandmarks||!res.multiFaceLandmarks.length){
-    statusEl.textContent='no face — look into camera';
-    phaseEl.classList.remove('down');
-    return;
+        // Draw bounding box
+        cx.strokeStyle = phase === 'down' ? '#c8f060' : 'rgba(255,255,255,0.3)';
+        cx.lineWidth = 1.5;
+        cx.strokeRect(x1, y1, w, h);
+
+        // Draw keypoints
+        if (p.landmarks) {
+          cx.fillStyle = phase === 'down' ? '#c8f060' : 'rgba(255,255,255,0.5)';
+          for (const [lx, ly] of p.landmarks) {
+            cx.beginPath(); cx.arc(lx, ly, 3, 0, Math.PI * 2); cx.fill();
+          }
+        }
+      } else {
+        setStatus('look into camera');
+        document.getElementById('depth-dot').classList.remove('active');
+      }
+    } catch (e) { /* skip frame */ }
   }
-
-  const lm=res.multiFaceLandmarks[0];
-  const nose=lm[1],forehead=lm[10],chin=lm[152],leftEar=lm[234],rightEar=lm[454];
-
-  // Multi-metric depth estimation for angle robustness
-  const faceH=Math.abs(chin.y-forehead.y)*canvasEl.height;
-  const faceW=Math.abs(leftEar.x-rightEar.x)*canvasEl.width;
-  const faceArea=faceH*faceW;
-
-  const sens=getSens();
-
-  if(baseSize===null){
-    if(calibFrames<25){
-      calibSum+=faceArea;calibFrames++;
-      statusEl.textContent=`calibrating… ${calibFrames}/25`;
-      return;
-    } else {
-      baseSize=calibSum/calibFrames;
-      statusEl.textContent='✓ go!';
-    }
-  }
-
-  const ratio=faceArea/baseSize;
-  const pct=Math.min(100,Math.max(0,Math.round((ratio-0.7)/0.9*100)));
-  document.getElementById('depth-fill').style.width=pct+'%';
-
-  const downThr=1+sens;
-  const upThr=1-sens*0.5;
-
-  if(repPhase==='up'&&ratio>downThr){
-    repPhase='down';
-    phaseEl.classList.add('down');
-  } else if(repPhase==='down'&&ratio<upThr){
-    repPhase='up';
-    phaseEl.classList.remove('down');
-    curReps++;
-    updateWUI();
-    pulseCtr();
-  }
-
-  // Draw subtle mesh
-  ctx2d.fillStyle=repPhase==='down'?'rgba(74,222,128,0.5)':'rgba(255,255,255,0.25)';
-  for(const p of lm){
-    ctx2d.beginPath();
-    ctx2d.arc(p.x*canvasEl.width,p.y*canvasEl.height,1.3,0,Math.PI*2);
-    ctx2d.fill();
-  }
-
-  if(calibFrames>=25) statusEl.textContent=repPhase==='down'?'⬇ hold…':'⬆ push up';
+  rafId = requestAnimationFrame(loop);
 }
 
-function pulseCtr(){
-  const el=document.getElementById('rep-counter');
-  el.style.transform='scale(1.3)';
-  setTimeout(()=>el.style.transform='scale(1)',130);
+function pulse() {
+  const el = document.getElementById('rep-counter');
+  el.style.transform = 'scale(1.25)';
+  setTimeout(() => el.style.transform = 'scale(1)', 120);
 }
 
-function stopCamera(){
-  isRunning=false;
-  if(rafId)cancelAnimationFrame(rafId);
-  if(stream)stream.getTracks().forEach(t=>t.stop());
-  stream=null;faceMesh=null;
-}
-
-loadHist();updateIdleStats();
+load(); refreshIdle();
 </script>
 </body>
 </html>
